@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pocket Greenhouse</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #e0f2f1 0%, #fff3e0 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #2e7d32;
+            --text-sub: #ef6c00;
+            --accent: #81c784;
+            --shadow: 0 8px 32px 0 rgba(139, 195, 74, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-gradient);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        /* Header / Currency */
+        header {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .currency {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-sub);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Main Stage */
+        .greenhouse {
+            flex: 1;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .plant-stage {
+            width: 220px;
+            height: 220px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.6);
+            position: relative;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .plant-stage:active {
+            transform: scale(0.95);
+        }
+
+        /* SVG Succulent Graphics */
+        .plant-svg {
+            width: 140px;
+            height: 140px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .pot { fill: #d84315; }
+        .soil { fill: #5d4037; }
+        .leaf-light { fill: #a5d6a7; }
+        .leaf-dark { fill: #81c784; }
+        .bloom { fill: #ff80ab; }
+
+        /* UI Bubbles */
+        .status-bubble {
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+            box-shadow: var(--shadow);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 80%;
+            height: 12px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #a5d6a7, #66bb6a);
+            transition: width 0.3s ease;
+        }
+
+        /* Bottom Menu */
+        .controls {
+            width: 100%;
+            max-width: 400px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #444;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:active {
+            transform: translateY(2px);
+            background: rgba(255,255,255,0.95);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button .icon {
+            font-size: 1.6rem;
+        }
+
+        button .cost {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+        }
+
+        /* Floating Text Tap Effect */
+        .floating-text {
+            position: absolute;
+            color: var(--text-main);
+            font-weight: bold;
+            font-size: 1.2rem;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Pocket Greenhouse 🌿</h1>
+        <div class="currency">
+            <span id="sun-count">0</span> ☀️
+        </div>
+    </header>
+
+    <main class="greenhouse">
+        <div class="status-bubble" id="status-text">Loading Plant...</div>
+        
+        <div class="plant-stage" id="plant-clicker">
+            <svg class="plant-svg" viewBox="0 0 100 100">
+                <ellipse cx="50" cy="80" rx="25" ry="8" class="soil" />
+                <path d="M28 80 L32 95 L68 95 L72 80 Z" class="pot" />
+                
+                <path id="stage-1" d="M50 80 Q45 65 50 55 Q55 65 50 80" class="leaf-dark" />
+                
+                <g id="stage-2" style="display: none;">
+                    <path d="M50 78 Q30 70 35 60 Q45 68 50 78" class="leaf-light" />
+                    <path d="M50 78 Q70 70 65 60 Q55 68 50 78" class="leaf-light" />
+                </g>
+                
+                <g id="stage-3" style="display: none;">
+                    <path d="M50 75 Q40 55 50 45 Q60 55 50 75" class="leaf-dark" />
+                    <path d="M50 76 Q25 55 40 50 Q48 62 50 76" class="leaf-light" />
+                    <path d="M50 76 Q75 55 60 50 Q52 62 50 76" class="leaf-light" />
+                </g>
+                
+                <g id="stage-4" style="display: none;">
+                    <circle cx="50" cy="40" r="6" class="bloom" />
+                    <circle cx="44" cy="40" r="4" class="bloom" />
+                    <circle cx="56" cy="40" r="4" class="bloom" />
+                    <circle cx="50" cy="34" r="4" class="bloom" />
+                    <circle cx="50" cy="46" r="4" class="bloom" />
+                    <circle cx="50" cy="40" r="3" fill="#fff" />
+                </g>
+            </svg>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </main>
+
+    <footer class="controls">
+        <button id="btn-water">
+            <span class="icon">💧</span>
+            <span>Water</span>
+            <span class="cost" id="water-cost">Free</span>
+        </button>
+        <button id="btn-fertilize">
+            <span class="icon">🧪</span>
+            <span>Fertilize</span>
+            <span class="cost" id="fertilizer-cost">15 ☀️</span>
+        </button>
+    </footer>
+    <script>
+        let gameState = {
+            sun: 0,
+            growth: 0,
+            level: 1,
+            fertilizerCost: 15
+        };
+
+        const maxGrowth = 100;
+        const levelNames = ["Fresh Seed", "Tiny Sprout", "Growing Succulent", "Flourishing Rosette", "Blooming Cactus"];
+
+        const sunCountEl = document.getElementById('sun-count');
+        const statusTextEl = document.getElementById('status-text');
+        const progressBarEl = document.getElementById('progress-bar');
+        const plantClicker = document.getElementById('plant-clicker');
+        const btnWater = document.getElementById('btn-water');
+        const btnFertilize = document.getElementById('btn-fertilize');
+        const fertilizerCostEl = document.getElementById('fertilizer-cost');
+
+        const s2 = document.getElementById('stage-2');
+        const s3 = document.getElementById('stage-3');
+        const s4 = document.getElementById('stage-4');
+
+        function loadGame() {
+            const savedState = localStorage.getItem('pocketGreenhouse_save');
+            if (savedState) {
+                gameState = JSON.parse(savedState);
+            }
+            updateUI();
+        }
+
+        function saveGame() {
+            localStorage.setItem('pocketGreenhouse_save', JSON.stringify(gameState));
+        }
+
+        function updateUI() {
+            sunCountEl.textContent = Math.floor(gameState.sun);
+            fertilizerCostEl.textContent = `${gameState.fertilizerCost} ☀️`;
+            
+            const percent = (gameState.growth / maxGrowth) * 100;
+            progressBarEl.style.width = `${percent}%`;
+
+            if(gameState.level >= 5) {
+                statusTextEl.textContent = `${levelNames[4]} ✨ (Max Level!)`;
+                progressBarEl.style.width = `100%`;
+            } else {
+                statusTextEl.textContent = `${levelNames[gameState.level - 1]} (Level ${gameState.level})`;
+            }
+
+            if (gameState.level >= 2) s2.style.display = 'block';
+            if (gameState.level >= 3) s3.style.display = 'block';
+            if (gameState.level >= 4) s4.style.display = 'block';
+
+            btnFertilize.disabled = gameState.sun < gameState.fertilizerCost || gameState.level >= 5;
+            if(gameState.level >= 5) btnWater.disabled = true;
+        }
+
+        function addGrowth(amount) {
+            if (gameState.level >= 5) return;
+
+            gameState.growth += amount;
+            if (gameState.growth >= maxGrowth) {
+                gameState.growth = 0;
+                gameState.level++;
+                createFloatingText("LEVEL UP! 🎉", plantClicker);
+            }
+            saveGame();
+            updateUI();
+        }
+
+        plantClicker.addEventListener('click', (e) => {
+            gameState.sun += 1 * (gameState.level * 0.5 + 0.5);
+            createFloatingText("+☀️", plantClicker, e);
+            saveGame();
+            updateUI();
+        });
+
+        btnWater.addEventListener('click', (e) => {
+            addGrowth(5);
+            createFloatingText("+5 🌱", btnWater);
+        });
+
+        btnFertilize.addEventListener('click', (e) => {
+            if (gameState.sun >= gameState.fertilizerCost) {
+                gameState.sun -= gameState.fertilizerCost;
+                addGrowth(25);
+                gameState.fertilizerCost = Math.floor(gameState.fertilizerCost * 1.4);
+                createFloatingText("Mega Growth! 🧪", btnFertilize);
+                saveGame();
+                updateUI();
+            }
+        });
+
+        function createFloatingText(text, parent, event = null) {
+            const float = document.createElement('div');
+            float.className = 'floating-text';
+            float.textContent = text;
+
+            if (event) {
+                const rect = parent.getBoundingClientRect();
+                float.style.left = `${event.clientX - rect.left - 10}px`;
+                float.style.top = `${event.clientY - rect.top - 20}px`;
+            } else {
+                float.style.left = '40%';
+                float.style.top = '10px';
+            }
+
+            parent.appendChild(float);
+            setTimeout(() => float.remove(), 800);
+        }
+
+        setInterval(() => {
+            if(gameState.level > 1) {
+                gameState.sun += (gameState.level - 1);
+                updateUI();
+                saveGame();
+            }
+        }, 5000);
+
+        loadGame();
+    </script>
+</body>
+</html>
