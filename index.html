@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocket Greenhouse XL</title>
+    <title>Pocket Greenhouse Ultra</title>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #e0f2f1 0%, #fff3e0 100%);
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --text-main: #2e7d32;
-            --text-sub: #ef6c00;
-            --accent: #81c784;
-            --shadow: 0 8px 32px 0 rgba(139, 195, 74, 0.2);
+            --bg-gradient: linear-gradient(135deg, #0a140a 0%, #142414 100%);
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --text-main: #a5d6a7;
+            --text-sub: #ffb74d;
+            --border: rgba(255, 255, 255, 0.08);
         }
 
         * {
@@ -23,238 +22,186 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background: var(--bg-gradient);
-            color: #333;
+            color: #eee;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            overflow: hidden;
-            padding: 20px;
+            padding: 12px;
+            overflow-x: hidden;
         }
 
-        /* Header / Currency */
         header {
             width: 100%;
-            max-width: 400px;
+            max-width: 460px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: var(--card-bg);
-            padding: 15px 20px;
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            z-index: 10;
+            padding: 10px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
         }
 
-        h1 {
-            font-size: 1.1rem;
-            color: var(--text-main);
-            font-weight: 700;
-        }
+        h1 { font-size: 0.95rem; color: var(--text-main); }
+        .stats-top { display: flex; flex-direction: column; align-items: flex-end; }
+        .currency { font-size: 1.25rem; font-weight: bold; color: var(--text-sub); }
+        .prestige-count { font-size: 0.75rem; color: #b39ddb; font-weight: bold; }
 
-        .stats-top {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 2px;
-        }
-
-        .currency {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--text-sub);
-        }
-
-        .prestige-count {
-            font-size: 0.8rem;
-            font-weight: bold;
-            color: #7b1fa2;
-        }
-
-        /* Main Stage */
         .greenhouse {
-            flex: 1;
             width: 100%;
-            max-width: 400px;
+            max-width: 460px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
             position: relative;
         }
 
         .plant-stage {
-            width: 220px;
-            height: 220px;
-            background: rgba(255, 255, 255, 0.4);
+            width: 160px;
+            height: 160px;
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.6);
-            position: relative;
-            margin-bottom: 20px;
-            transition: transform 0.2s ease;
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.03);
+            margin: 8px 0;
+            transition: transform 0.1s ease;
         }
+        .plant-stage:active { transform: scale(0.96); }
 
-        .plant-stage:active {
-            transform: scale(0.95);
-        }
+        .plant-svg { width: 110px; height: 110px; }
+        .pot { fill: #a0522d; }
+        .soil { fill: #2b1d0c; }
+        .leaf-light { fill: #81c784; }
+        .leaf-dark { fill: #388e3c; }
+        .bloom { fill: #d81b60; }
 
-        /* SVG Succulent Graphics */
-        .plant-svg {
-            width: 140px;
-            height: 140px;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .pot { fill: #d84315; }
-        .soil { fill: #5d4037; }
-        .leaf-light { fill: #a5d6a7; }
-        .leaf-dark { fill: #81c784; }
-        .bloom { fill: #ff80ab; }
-
-        /* UI Bubbles */
         .status-bubble {
             background: var(--card-bg);
-            padding: 8px 16px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #555;
-            box-shadow: var(--shadow);
-            margin-bottom: 10px;
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
             text-align: center;
         }
 
-        /* Progress Bar */
         .progress-container {
-            width: 80%;
-            height: 12px;
-            background: rgba(0,0,0,0.1);
-            border-radius: 6px;
+            width: 90%;
+            height: 8px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 4px;
             overflow: hidden;
-            margin-bottom: 30px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.03);
         }
-
         .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #a5d6a7, #66bb6a);
-            transition: width 0.1s ease;
+            width: 0%; height: 100%;
+            background: linear-gradient(90deg, #388e3c, #81c784);
         }
 
-        /* Bottom Menu */
-        .controls {
+        .shop-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 460px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 310px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .shop-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-info { display: flex; flex-direction: column; gap: 1px; }
+        .item-title { font-weight: bold; font-size: 0.85rem; color: #fff; }
+        .item-desc { font-size: 0.72rem; color: #aaa; }
+
+        .btn-buy {
+            background: rgba(255, 183, 77, 0.12);
+            border: 1px solid var(--text-sub);
+            color: var(--text-sub);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 85px;
+            text-align: center;
+        }
+        .btn-buy:disabled { opacity: 0.25; cursor: not-allowed; }
+
+        .action-footer {
+            width: 100%;
+            max-width: 460px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 10px;
+            gap: 8px;
+            margin-top: 10px;
         }
-
-        button {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            padding: 12px;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #444;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            cursor: pointer;
+        .btn-action {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.85rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
-            transition: background 0.2s, transform 0.1s;
-            -webkit-tap-highlight-color: transparent;
+            gap: 2px;
         }
 
-        button:active {
-            transform: translateY(2px);
-            background: rgba(255,255,255,0.95);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        button .icon {
-            font-size: 1.4rem;
-        }
-
-        button .cost {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-        }
-
-        /* Floating Text Tap Effect */
         .floating-text {
             position: absolute;
             color: var(--text-main);
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1rem;
             pointer-events: none;
-            animation: floatUp 0.8s ease-out forwards;
+            animation: floatUp 0.6s ease-out forwards;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
         }
-
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-60px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-45px) scale(1.1); }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Pocket Greenhouse 🌿</h1>
+        <h1>Greenhouse Ultra 🌿</h1>
         <div class="stats-top">
             <div class="currency"><span id="sun-count">0</span> ☀️</div>
-            <div class="prestige-count" id="prestige-display" style="display: none;"><span id="star-count">0</span> 🌟 (Seed Master)</div>
+            <div class="prestige-count" id="prestige-display" style="display:none;"><span id="star-count">0</span> 🌟 Multiplier</div>
         </div>
     </header>
 
     <main class="greenhouse">
-        <div class="status-bubble" id="status-text">Loading Plant...</div>
+        <div class="status-bubble" id="status-text">Loading...</div>
         
         <div class="plant-stage" id="plant-clicker">
             <svg class="plant-svg" viewBox="0 0 100 100">
                 <ellipse cx="50" cy="80" rx="25" ry="8" class="soil" />
                 <path d="M28 80 L32 95 L68 95 L72 80 Z" class="pot" />
-                
                 <path id="stage-1" d="M50 80 Q45 65 50 55 Q55 65 50 80" class="leaf-dark" />
-                
-                <g id="stage-2" style="display: none;">
-                    <path d="M50 78 Q30 70 35 60 Q45 68 50 78" class="leaf-light" />
-                    <path d="M50 78 Q70 70 65 60 Q55 68 50 78" class="leaf-light" />
-                </g>
-                
-                <g id="stage-3" style="display: none;">
-                    <path d="M50 75 Q40 55 50 45 Q60 55 50 75" class="leaf-dark" />
-                    <path d="M50 76 Q25 55 40 50 Q48 62 50 76" class="leaf-light" />
-                    <path d="M50 76 Q75 55 60 50 Q52 62 50 76" class="leaf-light" />
-                </g>
-                
-                <g id="stage-4" style="display: none;">
-                    <circle cx="50" cy="40" r="6" class="bloom" />
-                    <circle cx="44" cy="40" r="4" class="bloom" />
-                    <circle cx="56" cy="40" r="4" class="bloom" />
-                    <circle cx="50" cy="34" r="4" class="bloom" />
-                    <circle cx="50" cy="46" r="4" class="bloom" />
-                    <circle cx="50" cy="40" r="3" fill="#fff" />
-                </g>
+                <g id="stage-2" style="display: none;"><path d="M50 78 Q30 70 35 60 Q45 68 50 78" class="leaf-light" /><path d="M50 78 Q70 70 65 60 Q55 68 50 78" class="leaf-light" /></g>
+                <g id="stage-3" style="display: none;"><path d="M50 75 Q40 55 50 45 Q60 55 50 75" class="leaf-dark" /><path d="M50 76 Q25 55 40 50 Q48 62 50 76" class="leaf-light" /></g>
+                <g id="stage-4" style="display: none;"><circle cx="50" cy="40" r="6" class="bloom" /><circle cx="44" cy="40" r="4" class="bloom" /><circle cx="50" cy="40" r="3" fill="#fff" /></g>
             </svg>
         </div>
 
@@ -263,38 +210,54 @@
         </div>
     </main>
 
-    <footer class="controls">
-        <button id="btn-water">
-            <span class="icon">💧</span>
-            <span>Water Plant</span>
-            <span class="cost" id="water-cost">Free</span>
-        </button>
-        <button id="btn-fertilize">
-            <span class="icon">🧪</span>
-            <span>Super Fertilizer</span>
-            <span class="cost" id="fertilizer-cost">15 ☀️</span>
-        </button>
+        <section class="shop-container">
+        <div class="shop-item">
+            <div class="item-info"><span class="item-title">Drip Irrigation 💧</span><span class="item-desc">Automated passive plant growth (+1/s)</span></div>
+            <button class="btn-buy" id="upg-0">0 ☀️</button>
+        </div>
+        <div class="shop-item">
+            <div class="item-info"><span class="item-title">Solar UV Matrix 💡</span><span class="item-desc">Manual taps give extra energy (+2)</span></div>
+            <button class="btn-buy" id="upg-1">0 ☀️</button>
+        </div>
+        <div class="shop-item">
+            <div class="item-info"><span class="item-title">Mycorrhiza Fungi 🌱</span><span class="item-desc">Manual watering power increased (+6)</span></div>
+            <button class="btn-buy" id="upg-2">0 ☀️</button>
+        </div>
+        <div class="shop-item">
+            <div class="item-info"><span class="item-title">Bio-Reactor Tech 🧪</span><span class="item-desc">Automated passive sun absorption (+6/s)</span></div>
+            <button class="btn-buy" id="upg-3">0 ☀️</button>
+        </div>
+        <div class="shop-item">
+            <div class="item-info"><span class="item-title">Automated Sprinklers 🌧️</span><span class="item-desc">Passive scale multiplier on auto-growth (+15%)</span></div>
+            <button class="btn-buy" id="upg-4">0 ☀️</button>
+        </div>
+        <div class="shop-item">
+            <div class="item-info"><span class="item-title">Quantum Chloroplasts ⚛️</span><span class="item-desc">Forced multiplier on global solar gains (+25%)</span></div>
+            <button class="btn-buy" id="upg-5">0 ☀️</button>
+        </div>
+    </section>
+
+    <footer class="action-footer">
+        <button class="btn-action" id="btn-water">💧 <span>Water Plant</span><span style="font-size:0.68rem;color:var(--text-main);" id="water-power-text">+3</span></button>
+        <button class="btn-action" id="btn-fertilize">🧪 <span>Fertilizer</span><span style="font-size:0.68rem;color:var(--text-sub);" id="fert-cost-text">15 ☀️</span></button>
     </footer>
 
         <script>
-        // Game State Core
         let gameState = {
             sun: 0,
             growth: 0,
             level: 1,
             prestige: 0,
-            fertilizerCost: 15
+            fertilizerCost: 15,
+            upgrades: [0, 0, 0, 0, 0, 0]
         };
 
-        // Balancing Matrix (Significantly increased difficulty to prevent 1-minute finishes)
         const baseMaxGrowth = 100;
-        const levelNames = [
-            "Fresh Seed", "Tiny Sprout", "Growing Succulent", "Healthy Shrub", "Flourishing Rosette",
-            "Budding Blossom", "Exotic Cacti", "Ancient Topiary", "Mythical Bonsai", "Cosmic World-Tree"
-        ];
-        const maxLevel = levelNames.length;
+        const maxLevel = 40;
+        
+        const upgradeBaseCosts =;
+        const upgradeCostScales = [1.4, 1.45, 1.5, 1.55, 1.7, 2.0];
 
-        // DOM Nodes
         const sunCountEl = document.getElementById('sun-count');
         const starCountEl = document.getElementById('star-count');
         const prestigeDisplay = document.getElementById('prestige-display');
@@ -303,72 +266,79 @@
         const plantClicker = document.getElementById('plant-clicker');
         const btnWater = document.getElementById('btn-water');
         const btnFertilize = document.getElementById('btn-fertilize');
-        const fertilizerCostEl = document.getElementById('fertilizer-cost');
+        const fertCostText = document.getElementById('fert-cost-text');
+        const waterPowerText = document.getElementById('water-power-text');
 
-        // SVG Visual Stages
         const s2 = document.getElementById('stage-2');
         const s3 = document.getElementById('stage-3');
         const s4 = document.getElementById('stage-4');
 
-        // Core Load Action
         function loadGame() {
-            const savedState = localStorage.getItem('pocketGreenhouse_xl_save');
+            const savedState = localStorage.getItem('pocketGreenhouse_u_save');
             if (savedState) {
                 gameState = JSON.parse(savedState);
+            }
+            if (gameState.upgrades.length < 6) {
+                while(gameState.upgrades.length < 6) gameState.upgrades.push(0);
             }
             updateUI();
         }
 
-        // Core Save Action (Saves entire progress state)
         function saveGame() {
-            localStorage.setItem('pocketGreenhouse_xl_save', JSON.stringify(gameState));
+            localStorage.setItem('pocketGreenhouse_u_save', JSON.stringify(gameState));
         }
 
-        // Dynamically compute max growth needed for current level (Scales exponentially)
         function getRequiredGrowth() {
-            return baseMaxGrowth * Math.pow(1.6, gameState.level - 1);
+            return Math.floor(baseMaxGrowth * Math.pow(1.65, gameState.level - 1));
+        }
+
+        function getUpgradeCost(index) {
+            return Math.floor(upgradeBaseCosts[index] * Math.pow(upgradeCostScales[index], gameState.upgrades[index]));
         }
 
         function updateUI() {
             sunCountEl.textContent = Math.floor(gameState.sun);
-            fertilizerCostEl.textContent = `${gameState.fertilizerCost} ☀️`;
+            fertCostText.textContent = `${gameState.fertilizerCost} ☀️`;
             
-            // Calculate scale difficulty progression
             const reqGrowth = getRequiredGrowth();
             const percent = (gameState.growth / reqGrowth) * 100;
             progressBarEl.style.width = `${percent}%`;
 
-            // Prestige (🌟 Master Seeds) Visual Check
+            const waterPower = Math.floor((3 + gameState.upgrades[2] * 6) * (1 + gameState.prestige * 0.5));
+            waterPowerText.textContent = `+${waterPower} Growth`;
+
             if (gameState.prestige > 0) {
                 prestigeDisplay.style.display = 'block';
-                starCountEl.textContent = gameState.prestige;
+                starCountEl.textContent = `x${1 + gameState.prestige}`;
             }
 
-            // Handle Endgame or Level Updates
             if (gameState.level >= maxLevel) {
-                statusTextEl.textContent = `${levelNames[maxLevel-1]} ✨ (Ready to Harvest!)`;
+                statusTextEl.textContent = `Omega Astral Deity 🌌 (Harvest Time!)`;
                 progressBarEl.style.width = `100%`;
-                
-                // Morph Fertilize Button into a Prestige Harvest Button
-                btnFertilize.innerHTML = '<span class="icon">🌟</span><span>Harvest Seed</span><span class="cost">Resets for +1 Multiplier</span>';
+                btnFertilize.innerHTML = '🌟 <span>Harvest Plant</span><span style="font-size:0.65rem;color:var(--text-sub);">Prestige Reset (+1 Multiplier)</span>';
                 btnFertilize.disabled = false;
                 btnWater.disabled = true;
             } else {
-                statusTextEl.textContent = `${levelNames[gameState.level - 1]} (Level ${gameState.level}/${maxLevel})`;
-                btnFertilize.innerHTML = '<span class="icon">🧪</span><span>Super Fertilizer</span><span class="cost" id="fertilizer-cost">' + gameState.fertilizerCost + ' ☀️</span>';
+                statusTextEl.textContent = `Plant Lifecycle (Level ${gameState.level}/${maxLevel})`;
+                btnFertilize.innerHTML = '🧪 <span>Fertilizer</span><span style="font-size:0.65rem;color:var(--text-sub);" id="fert-cost-text">' + gameState.fertilizerCost + ' ☀️</span>';
                 btnWater.disabled = false;
                 btnFertilize.disabled = gameState.sun < gameState.fertilizerCost;
             }
 
-            // Visual Evolutions Based on Milestones
-            s2.style.display = gameState.level >= 3 ? 'block' : 'none';
-            s3.style.display = gameState.level >= 6 ? 'block' : 'none';
-            s4.style.display = gameState.level >= 9 ? 'block' : 'none';
+            for (let i = 0; i < 6; i++) {
+                const btn = document.getElementById(`upg-${i}`);
+                const cost = getUpgradeCost(i);
+                btn.textContent = `${cost} ☀️`;
+                btn.disabled = gameState.sun < cost;
+            }
+
+            s2.style.display = gameState.level >= 10 ? 'block' : 'none';
+            s3.style.display = gameState.level >= 22 ? 'block' : 'none';
+            s4.style.display = gameState.level >= 35 ? 'block' : 'none';
         }
 
         function addGrowth(amount) {
             if (gameState.level >= maxLevel) return;
-
             gameState.growth += amount;
             const reqGrowth = getRequiredGrowth();
 
@@ -380,49 +350,60 @@
             updateUI();
         }
 
-        // Tap Mechanics (Includes global multipliers from prestige stars)
         plantClicker.addEventListener('click', (e) => {
             const prestigeBonus = 1 + gameState.prestige;
-            const gain = 1 * (gameState.level * 0.4 + 0.6) * prestigeBonus;
-            gameState.sun += gain;
-            createFloatingText(`+${Math.floor(gain)}☀️`, plantClicker, e);
+            const levelBonus = 1 + (gameState.level - 1) * 0.5; 
+            const uvBonus = gameState.upgrades[1] * 2;
+            const quantumMult = 1 + (gameState.upgrades[5] * 0.25);
+            
+            const totalTapGain = Math.floor((levelBonus + uvBonus) * prestigeBonus * quantumMult);
+            
+            gameState.sun += totalTapGain;
+            createFloatingText(`+${totalTapGain}☀️`, plantClicker, e);
             updateUI();
         });
 
-        // Water Mechanism
         btnWater.addEventListener('click', () => {
-            const waterPower = 3 + (gameState.prestige * 2);
+            const waterPower = Math.floor((3 + gameState.upgrades[2] * 6) * (1 + gameState.prestige * 0.5));
             addGrowth(waterPower);
             createFloatingText(`+${waterPower} 🌱`, btnWater);
         });
 
-        // Fertilizer or Harvest Prestige Event Click
         btnFertilize.addEventListener('click', () => {
-            // Prestige Loop Trigger
             if (gameState.level >= maxLevel) {
                 gameState.prestige += 1;
                 gameState.level = 1;
                 gameState.growth = 0;
                 gameState.sun = 0;
                 gameState.fertilizerCost = 15;
-                createFloatingText("Harvested! 🌟", plantClicker);
+                gameState.upgrades =;
+                createFloatingText("Ascended! 🌟", plantClicker);
                 saveGame();
                 updateUI();
                 return;
             }
 
-            // Standard Buy Upgrade Action
             if (gameState.sun >= gameState.fertilizerCost) {
                 gameState.sun -= gameState.fertilizerCost;
-                const fertPower = 20 + (gameState.prestige * 10);
+                const fertPower = Math.floor(getRequiredGrowth() * 0.22) + 15;
                 addGrowth(fertPower);
-                
-                // Scales the currency requirements significantly harder
-                gameState.fertilizerCost = Math.floor(gameState.fertilizerCost * 1.6) + 10;
+                gameState.fertilizerCost = Math.floor(gameState.fertilizerCost * 1.65) + 25;
                 createFloatingText(`+${fertPower} 🧪`, btnFertilize);
                 updateUI();
             }
         });
+
+        for (let i = 0; i < 6; i++) {
+            document.getElementById(`upg-${i}`).addEventListener('click', () => {
+                const cost = getUpgradeCost(i);
+                if (gameState.sun >= cost) {
+                    gameState.sun -= cost;
+                    gameState.upgrades[i]++;
+                    createFloatingText("Upgraded! ⚡", document.getElementById(`upg-${i}`));
+                    updateUI();
+                }
+            });
+        }
 
         function createFloatingText(text, parent, event = null) {
             const float = document.createElement('div');
@@ -434,29 +415,33 @@
                 float.style.left = `${event.clientX - rect.left - 10}px`;
                 float.style.top = `${event.clientY - rect.top - 20}px`;
             } else {
-                float.style.left = '40%';
-                float.style.top = '10px';
+                float.style.left = '35%';
+                float.style.top = '5px';
             }
 
             parent.appendChild(float);
-            setTimeout(() => float.remove(), 800);
+            setTimeout(() => float.remove(), 600);
         }
 
-        // Passive Generation Tick (Every 5 seconds)
         setInterval(() => {
-            if (gameState.level > 1) {
-                const passiveGain = (gameState.level - 1) * (1 + gameState.prestige);
-                gameState.sun += passiveGain;
-                updateUI();
+            if (gameState.upgrades[0] > 0) {
+                const sprinklerBonus = 1 + (gameState.upgrades[4] * 0.15);
+                addGrowth(Math.floor(gameState.upgrades[0] * 2 * sprinklerBonus));
             }
-        }, 5000);
+            
+            if (gameState.upgrades[3] > 0) {
+                const quantumMult = 1 + (gameState.upgrades[5] * 0.25);
+                const passiveSunGained = Math.floor(gameState.upgrades[3] * 5 * (1 + gameState.prestige) * quantumMult);
+                gameState.sun += passiveSunGained;
+            }
+            
+            updateUI();
+        }, 1000);
 
-        // HARD FORCED AUTOMATIC SAVE TICK ENGINE (Executes every 1 second)
         setInterval(() => {
             saveGame();
         }, 1000);
 
-        // Bootstrap on startup
         loadGame();
     </script>
 </body>
