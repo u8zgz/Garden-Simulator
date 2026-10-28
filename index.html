@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocket Greenhouse</title>
+    <title>Pocket Greenhouse XL</title>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #e0f2f1 0%, #fff3e0 100%);
@@ -53,18 +53,28 @@
         }
 
         h1 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--text-main);
             font-weight: 700;
+        }
+
+        .stats-top {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
         }
 
         .currency {
             font-size: 1.2rem;
             font-weight: bold;
             color: var(--text-sub);
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        }
+
+        .prestige-count {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #7b1fa2;
         }
 
         /* Main Stage */
@@ -137,7 +147,7 @@
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg, #a5d6a7, #66bb6a);
-            transition: width 0.3s ease;
+            transition: width 0.1s ease;
         }
 
         /* Bottom Menu */
@@ -153,9 +163,9 @@
         button {
             background: var(--card-bg);
             border: 1px solid rgba(255, 255, 255, 0.6);
-            padding: 15px;
+            padding: 12px;
             border-radius: 20px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: #444;
             box-shadow: var(--shadow);
@@ -165,7 +175,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: background 0.2s, transform 0.1s;
             -webkit-tap-highlight-color: transparent;
         }
@@ -182,7 +192,7 @@
         }
 
         button .icon {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
         }
 
         button .cost {
@@ -195,7 +205,7 @@
             position: absolute;
             color: var(--text-main);
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             pointer-events: none;
             animation: floatUp 0.8s ease-out forwards;
         }
@@ -210,8 +220,9 @@
 
     <header>
         <h1>Pocket Greenhouse 🌿</h1>
-        <div class="currency">
-            <span id="sun-count">0</span> ☀️
+        <div class="stats-top">
+            <div class="currency"><span id="sun-count">0</span> ☀️</div>
+            <div class="prestige-count" id="prestige-display" style="display: none;"><span id="star-count">0</span> 🌟 (Seed Master)</div>
         </div>
     </header>
 
@@ -255,27 +266,38 @@
     <footer class="controls">
         <button id="btn-water">
             <span class="icon">💧</span>
-            <span>Water</span>
+            <span>Water Plant</span>
             <span class="cost" id="water-cost">Free</span>
         </button>
         <button id="btn-fertilize">
             <span class="icon">🧪</span>
-            <span>Fertilize</span>
+            <span>Super Fertilizer</span>
             <span class="cost" id="fertilizer-cost">15 ☀️</span>
         </button>
     </footer>
-    <script>
+
+        <script>
+        // Game State Core
         let gameState = {
             sun: 0,
             growth: 0,
             level: 1,
+            prestige: 0,
             fertilizerCost: 15
         };
 
-        const maxGrowth = 100;
-        const levelNames = ["Fresh Seed", "Tiny Sprout", "Growing Succulent", "Flourishing Rosette", "Blooming Cactus"];
+        // Balancing Matrix (Significantly increased difficulty to prevent 1-minute finishes)
+        const baseMaxGrowth = 100;
+        const levelNames = [
+            "Fresh Seed", "Tiny Sprout", "Growing Succulent", "Healthy Shrub", "Flourishing Rosette",
+            "Budding Blossom", "Exotic Cacti", "Ancient Topiary", "Mythical Bonsai", "Cosmic World-Tree"
+        ];
+        const maxLevel = levelNames.length;
 
+        // DOM Nodes
         const sunCountEl = document.getElementById('sun-count');
+        const starCountEl = document.getElementById('star-count');
+        const prestigeDisplay = document.getElementById('prestige-display');
         const statusTextEl = document.getElementById('status-text');
         const progressBarEl = document.getElementById('progress-bar');
         const plantClicker = document.getElementById('plant-clicker');
@@ -283,76 +305,121 @@
         const btnFertilize = document.getElementById('btn-fertilize');
         const fertilizerCostEl = document.getElementById('fertilizer-cost');
 
+        // SVG Visual Stages
         const s2 = document.getElementById('stage-2');
         const s3 = document.getElementById('stage-3');
         const s4 = document.getElementById('stage-4');
 
+        // Core Load Action
         function loadGame() {
-            const savedState = localStorage.getItem('pocketGreenhouse_save');
+            const savedState = localStorage.getItem('pocketGreenhouse_xl_save');
             if (savedState) {
                 gameState = JSON.parse(savedState);
             }
             updateUI();
         }
 
+        // Core Save Action (Saves entire progress state)
         function saveGame() {
-            localStorage.setItem('pocketGreenhouse_save', JSON.stringify(gameState));
+            localStorage.setItem('pocketGreenhouse_xl_save', JSON.stringify(gameState));
+        }
+
+        // Dynamically compute max growth needed for current level (Scales exponentially)
+        function getRequiredGrowth() {
+            return baseMaxGrowth * Math.pow(1.6, gameState.level - 1);
         }
 
         function updateUI() {
             sunCountEl.textContent = Math.floor(gameState.sun);
             fertilizerCostEl.textContent = `${gameState.fertilizerCost} ☀️`;
             
-            const percent = (gameState.growth / maxGrowth) * 100;
+            // Calculate scale difficulty progression
+            const reqGrowth = getRequiredGrowth();
+            const percent = (gameState.growth / reqGrowth) * 100;
             progressBarEl.style.width = `${percent}%`;
 
-            if(gameState.level >= 5) {
-                statusTextEl.textContent = `${levelNames[4]} ✨ (Max Level!)`;
-                progressBarEl.style.width = `100%`;
-            } else {
-                statusTextEl.textContent = `${levelNames[gameState.level - 1]} (Level ${gameState.level})`;
+            // Prestige (🌟 Master Seeds) Visual Check
+            if (gameState.prestige > 0) {
+                prestigeDisplay.style.display = 'block';
+                starCountEl.textContent = gameState.prestige;
             }
 
-            if (gameState.level >= 2) s2.style.display = 'block';
-            if (gameState.level >= 3) s3.style.display = 'block';
-            if (gameState.level >= 4) s4.style.display = 'block';
+            // Handle Endgame or Level Updates
+            if (gameState.level >= maxLevel) {
+                statusTextEl.textContent = `${levelNames[maxLevel-1]} ✨ (Ready to Harvest!)`;
+                progressBarEl.style.width = `100%`;
+                
+                // Morph Fertilize Button into a Prestige Harvest Button
+                btnFertilize.innerHTML = '<span class="icon">🌟</span><span>Harvest Seed</span><span class="cost">Resets for +1 Multiplier</span>';
+                btnFertilize.disabled = false;
+                btnWater.disabled = true;
+            } else {
+                statusTextEl.textContent = `${levelNames[gameState.level - 1]} (Level ${gameState.level}/${maxLevel})`;
+                btnFertilize.innerHTML = '<span class="icon">🧪</span><span>Super Fertilizer</span><span class="cost" id="fertilizer-cost">' + gameState.fertilizerCost + ' ☀️</span>';
+                btnWater.disabled = false;
+                btnFertilize.disabled = gameState.sun < gameState.fertilizerCost;
+            }
 
-            btnFertilize.disabled = gameState.sun < gameState.fertilizerCost || gameState.level >= 5;
-            if(gameState.level >= 5) btnWater.disabled = true;
+            // Visual Evolutions Based on Milestones
+            s2.style.display = gameState.level >= 3 ? 'block' : 'none';
+            s3.style.display = gameState.level >= 6 ? 'block' : 'none';
+            s4.style.display = gameState.level >= 9 ? 'block' : 'none';
         }
 
         function addGrowth(amount) {
-            if (gameState.level >= 5) return;
+            if (gameState.level >= maxLevel) return;
 
             gameState.growth += amount;
-            if (gameState.growth >= maxGrowth) {
+            const reqGrowth = getRequiredGrowth();
+
+            if (gameState.growth >= reqGrowth) {
                 gameState.growth = 0;
                 gameState.level++;
                 createFloatingText("LEVEL UP! 🎉", plantClicker);
             }
-            saveGame();
             updateUI();
         }
 
+        // Tap Mechanics (Includes global multipliers from prestige stars)
         plantClicker.addEventListener('click', (e) => {
-            gameState.sun += 1 * (gameState.level * 0.5 + 0.5);
-            createFloatingText("+☀️", plantClicker, e);
-            saveGame();
+            const prestigeBonus = 1 + gameState.prestige;
+            const gain = 1 * (gameState.level * 0.4 + 0.6) * prestigeBonus;
+            gameState.sun += gain;
+            createFloatingText(`+${Math.floor(gain)}☀️`, plantClicker, e);
             updateUI();
         });
 
-        btnWater.addEventListener('click', (e) => {
-            addGrowth(5);
-            createFloatingText("+5 🌱", btnWater);
+        // Water Mechanism
+        btnWater.addEventListener('click', () => {
+            const waterPower = 3 + (gameState.prestige * 2);
+            addGrowth(waterPower);
+            createFloatingText(`+${waterPower} 🌱`, btnWater);
         });
 
-        btnFertilize.addEventListener('click', (e) => {
+        // Fertilizer or Harvest Prestige Event Click
+        btnFertilize.addEventListener('click', () => {
+            // Prestige Loop Trigger
+            if (gameState.level >= maxLevel) {
+                gameState.prestige += 1;
+                gameState.level = 1;
+                gameState.growth = 0;
+                gameState.sun = 0;
+                gameState.fertilizerCost = 15;
+                createFloatingText("Harvested! 🌟", plantClicker);
+                saveGame();
+                updateUI();
+                return;
+            }
+
+            // Standard Buy Upgrade Action
             if (gameState.sun >= gameState.fertilizerCost) {
                 gameState.sun -= gameState.fertilizerCost;
-                addGrowth(25);
-                gameState.fertilizerCost = Math.floor(gameState.fertilizerCost * 1.4);
-                createFloatingText("Mega Growth! 🧪", btnFertilize);
-                saveGame();
+                const fertPower = 20 + (gameState.prestige * 10);
+                addGrowth(fertPower);
+                
+                // Scales the currency requirements significantly harder
+                gameState.fertilizerCost = Math.floor(gameState.fertilizerCost * 1.6) + 10;
+                createFloatingText(`+${fertPower} 🧪`, btnFertilize);
                 updateUI();
             }
         });
@@ -375,14 +442,21 @@
             setTimeout(() => float.remove(), 800);
         }
 
+        // Passive Generation Tick (Every 5 seconds)
         setInterval(() => {
-            if(gameState.level > 1) {
-                gameState.sun += (gameState.level - 1);
+            if (gameState.level > 1) {
+                const passiveGain = (gameState.level - 1) * (1 + gameState.prestige);
+                gameState.sun += passiveGain;
                 updateUI();
-                saveGame();
             }
         }, 5000);
 
+        // HARD FORCED AUTOMATIC SAVE TICK ENGINE (Executes every 1 second)
+        setInterval(() => {
+            saveGame();
+        }, 1000);
+
+        // Bootstrap on startup
         loadGame();
     </script>
 </body>
